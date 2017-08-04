@@ -16,38 +16,47 @@ namespace TelegramBot.MainListener
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            _settings = new SettingsManager("CheongBot");
-
-            var Bot = new Telegram.Bot.TelegramBotClient(_settings.BotToken);
-
-            ChatMessage msg;
-            BotCommander bot;
-            string content = "";
-            long defaultRcpt = _settings.DefaultRcpt;
-
             try
             {
-                using (var reader = new StreamReader(Request.InputStream))
+                _settings = new SettingsManager("CheongBot");
+
+                _settings.BotToken = "ASDFASDFSDAF";
+
+                var Bot = new Telegram.Bot.TelegramBotClient(_settings.BotToken);
+
+                ChatMessage msg;
+                BotCommander bot;
+                string content = "";
+                long defaultRcpt = _settings.DefaultRcpt;
+
+                try
                 {
-                    content = reader.ReadToEnd();
-
-                    msg = ChatMessage.FromJsonString(content);
-
-                    defaultRcpt = msg.Message.Chat.ID;
-
-                    bot = new BotCommander(_settings);
-                    string msgReturn;
-
-                    if (bot.ProcessCommand(msg.Message.Text, out msgReturn))
+                    using (var reader = new StreamReader(Request.InputStream))
                     {
-                        Bot.SendTextMessageAsync(msg.Message.Chat.ID, msgReturn);
+                        content = reader.ReadToEnd();
+
+                        msg = ChatMessage.FromJsonString(content);
+
+                        defaultRcpt = msg.Message.Chat.ID;
+
+                        bot = new BotCommander(_settings);
+                        string msgReturn;
+
+                        if (bot.ProcessCommand(msg.Message.Text, out msgReturn))
+                        {
+                            Bot.SendTextMessageAsync(msg.Message.Chat.ID, msgReturn);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Bot.SendTextMessageAsync(defaultRcpt, ex.ToString());
+                    Bot.SendTextMessageAsync(defaultRcpt, content);
                 }
             }
             catch (Exception ex)
             {
-                Bot.SendTextMessageAsync(defaultRcpt, ex.ToString());
-                Bot.SendTextMessageAsync(defaultRcpt, content);
+                System.IO.File.WriteAllText("E:\\error_bot.log", ex.ToString());
             }
         }
     }
