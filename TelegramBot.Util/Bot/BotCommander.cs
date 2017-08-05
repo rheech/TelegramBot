@@ -69,6 +69,9 @@ namespace TelegramBot.Util.Bot
                 case "version":
                     msgReturn = GetCurrentVersion(args);
                     break;
+                case "퇴근시간":
+                    msgReturn = GetOffWorkTime(args);
+                    break;
                 /*case "calc":
                     msgReturn = GetCalculator();
                     break;
@@ -101,6 +104,33 @@ namespace TelegramBot.Util.Bot
             }
 
             return true;
+        }
+
+        private string GetOffWorkTime(string[] args)
+        {
+            TimeSpan span;
+            DateTime time = DateTime.Now;
+            string result;
+
+            time = time.AddHours(time.Hour * -1);
+            time = time.AddMinutes(time.Minute * -1);
+            time = time.AddSeconds(time.Second * -1);
+            time = time.AddMilliseconds(time.Millisecond * -1);
+
+            time = time.AddHours(18);
+
+            span = time - DateTime.Now;
+
+            if (span >= TimeSpan.Zero)
+            {
+                result = String.Format("퇴근 시간까지 {0}시간 {1}분 {2}초 남았습니다.", span.Hours, span.Minutes, span.Seconds);
+            }
+            else
+            {
+                result = String.Format("퇴근 시간으로부터 {0}시간 {1}분 {2}초 경과하였습니다. 야근중이신가요?", -1 * span.Hours, -1 * span.Minutes, -1 * span.Seconds);
+            }
+
+            return result;
         }
 
         /*private PipeClient ConnectPipe()
@@ -180,8 +210,9 @@ namespace TelegramBot.Util.Bot
 
             sb.AppendFormat("사용법\r\n");
             sb.AppendFormat("/말해 <문장>: 입력한 말을 반복\r\n");
-            sb.AppendFormat("/시간: 현재 시간 출력\r\n");
             sb.AppendFormat("/날씨 <위치>: 특정 위치의 현재 날씨 출력\r\n");
+            sb.AppendFormat("/시간: 현재 시간 출력\r\n");
+            sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
             sb.AppendFormat("/version: 현재 버전 출력");
 
             return sb.ToString();
