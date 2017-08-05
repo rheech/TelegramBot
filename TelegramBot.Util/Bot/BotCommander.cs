@@ -81,13 +81,20 @@ namespace TelegramBot.Util.Bot
                     break;
                 default:
                     //msgReturn = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요.";
-                    if (args.Length > 1)
+                    try
                     {
-                        msgReturn = methods.ExecutePythonCommand(args[0], args[1]);
+                        if (args.Length > 1)
+                        {
+                            msgReturn = methods.ExecutePythonCommand(args[0], args[1]);
+                        }
+                        else
+                        {
+                            msgReturn = methods.ExecutePythonCommand(args[0], "");
+                        }
                     }
-                    else
+                    catch (Exception)
                     {
-                        msgReturn = methods.ExecutePythonCommand(args[0], "");
+                        msgReturn = String.Format("{0}: RPC 오류입니다. 잠시 후에 다시 시도해 주세요.", args[0]);
                     }
 
                     break;
