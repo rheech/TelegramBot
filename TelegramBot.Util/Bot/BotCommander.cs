@@ -1,5 +1,5 @@
-﻿using IpcPythonCS.Engine.CSharp;
-using IpcPythonCS.Engine.CSharp.Communication.Pipe;
+﻿//using IpcPythonCS.Engine.CSharp;
+//using IpcPythonCS.Engine.CSharp.Communication.Pipe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +12,14 @@ namespace TelegramBot.Util.Bot
 {
     public class BotCommander
     {
-        PythonExecutor executor;
+        //PythonExecutor executor;
         SettingsManager _settings;
 
         public BotCommander(SettingsManager settings)
         {
             _settings = settings;
-            executor = new PythonExecutor(_settings.PythonExePath, _settings.IPCPythonModulePath);
-            executor.RunScript("main.py");
+            /*executor = new PythonExecutor(_settings.PythonExePath, _settings.IPCPythonModulePath);
+            executor.RunScript("main.py");*/
         }
 
         private bool IsCommand(string requestedMessage)
@@ -68,12 +68,12 @@ namespace TelegramBot.Util.Bot
                 case "version":
                     msgReturn = GetCurrentVersion(args);
                     break;
-                case "calc":
+                /*case "calc":
                     msgReturn = GetCalculator();
                     break;
                 case "날씨":
                     msgReturn = GetWeatherByLocation(args);
-                    break;
+                    break;*/
                 case "?":
                 case "help":
                     msgReturn = GetHelp(args);
@@ -86,7 +86,7 @@ namespace TelegramBot.Util.Bot
             return true;
         }
 
-        private PipeClient ConnectPipe()
+        /*private PipeClient ConnectPipe()
         {
             PipeClient pipeClient = new PipeClient();
             pipeClient.Connect("pyrpcmethods");
@@ -132,7 +132,7 @@ namespace TelegramBot.Util.Bot
 
                 return "날씨 위치를 입력하세요.";
             }
-        }
+        }*/
 
         private string GetSayItCommand(string[] args)
         {

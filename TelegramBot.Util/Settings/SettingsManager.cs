@@ -6,45 +6,29 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using Microsoft.Win32;
-using IniParser;
-using IniParser.Model;
 
 namespace TelegramBot.Util.Settings
 {
     public class SettingsManager
     {
         private string _botName;
-        private string[] _keys = new string[] { "BotToken", "PythonExePath", "IpcPythonModulePath", "DefaultRcpt" };
-        private Dictionary<string, string> _dictSettings;
 
         public SettingsManager(string botName)
         {
             _botName = botName;
-
-            LoadConfig();
-        }
-
-        private void LoadConfig()
-        {
-            string[] values;
-
-            DirectoryInfo configPath = new DirectoryInfo(Environment.GetEnvironmentVariable("BOT_CONFIG_HOME"));
-
-            values = System.IO.File.ReadAllLines(String.Format("{0}{1}.ini", configPath.FullName, _botName));
-
-            _dictSettings = new Dictionary<string, string>();
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                _dictSettings.Add(_keys[i], values[i]);
-            }
         }
 
         private string GetSetting(string section, string defaultValue = "")
         {
             try
             {
-                return _dictSettings[section];
+                using (RegistryKey basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey subkey = basekey.OpenSubKey(String.Format("SOFTWARE\\VB and VBA Program Settings\\{0}\\{1}", "TelegramBot", _botName)))
+                    {
+                        return subkey.GetValue(section).ToString();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -54,11 +38,14 @@ namespace TelegramBot.Util.Settings
 
         private void SaveSetting(string section, string value)
         {
-            RegistryKey key = Registry.LocalMachine.CreateSubKey(String.Format("Software\\VB and VBA Program Settings\\{0}\\{1}", "TelegramBot", _botName));
-                
-            key.SetValue(section, value, RegistryValueKind.String);
+            using (RegistryKey basekey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+            {
+                using (RegistryKey subkey = basekey.CreateSubKey(String.Format("SOFTWARE\\VB and VBA Program Settings\\{0}\\{1}", "TelegramBot", _botName)))
+                {
+                    subkey.SetValue(section, value, RegistryValueKind.String);
+                }
+            }
             
-
             //Interaction.SaveSetting("TelegramBot", _botName, section, value);
         }
 

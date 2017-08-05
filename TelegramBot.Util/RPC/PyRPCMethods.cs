@@ -1,5 +1,5 @@
-﻿using IpcPythonCS.Engine.CSharp.Communication;
-using IpcPythonCS.Engine.CSharp.RPC;
+﻿//using IpcPythonCS.Engine.CSharp.Communication;
+//using IpcPythonCS.Engine.CSharp.RPC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TelegramBot.Util.RPC
 {
-    public class PyRPCMethods : RPCWrapper
+    /*public class PyRPCMethods : RPCWrapper
     {
         public PyRPCMethods(ICommunicator communicator)
             : base(communicator)
@@ -30,5 +30,5 @@ namespace TelegramBot.Util.RPC
         {
             return CallPythonFunction<string>(locName);
         }
-    }
+    }*/
 }

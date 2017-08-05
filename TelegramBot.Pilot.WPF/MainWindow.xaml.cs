@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TelegramBot.Util.Bot;
+using TelegramBot.Util.Settings;
 
 namespace TelegramBot.Pilot.WPF
 {
@@ -23,6 +25,18 @@ namespace TelegramBot.Pilot.WPF
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsManager mgr = new SettingsManager("CheongBot");
+
+            //MessageBox.Show(mgr.BotToken);
+
+            MessageCommunicator comm = new MessageCommunicator(mgr.BotToken);
+
+
+            comm.SendMessage(mgr.DefaultRcpt, "Hello world!");
         }
     }
 }
