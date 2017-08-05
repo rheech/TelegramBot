@@ -1,1 +1,0 @@
-﻿### Please use PyCharm to load this project. ###

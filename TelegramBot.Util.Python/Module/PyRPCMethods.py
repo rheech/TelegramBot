@@ -1,12 +1,7 @@
-from IpcPythonCS.RPC.RPCWrapper import RPCWrapper
-from IpcPythonCS.Communication.ICommunicator import ICommunicator
 from Module.OpenWeather import *
 
-class PyRPCMethods(RPCWrapper):
-    _communicator = ICommunicator
-
-    def __init__(self, communicator):
-        self._communicator = communicator
+class PyRPCMethods():
+    def __init__(self):
         return
 
     def Addition(self, a, b):

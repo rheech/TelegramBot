@@ -32,9 +32,6 @@ namespace TelegramBot.Util.Bot
         {
             string result = "";
 
-            //var client = new WebClient();
-            //var text = client.DownloadString(url);
-
             WebRequest req = WebRequest.Create(url);
             HttpWebRequest request = (HttpWebRequest)req;
             
@@ -43,10 +40,8 @@ namespace TelegramBot.Util.Bot
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             
-            
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                
                 Stream receiveStream = response.GetResponseStream();
                 StreamReader readStream = null;
                 
@@ -78,7 +73,6 @@ namespace TelegramBot.Util.Bot
                 result = readStream.ReadToEnd();
                 response.Close();
                 readStream.Close();
-                
             }
 
             return result;

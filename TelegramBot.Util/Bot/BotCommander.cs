@@ -45,6 +45,7 @@ namespace TelegramBot.Util.Bot
 
         public bool ProcessCommand(string requestedMessage, out string msgReturn)
         {
+            PyRPCMethods methods = new PyRPCMethods();
             string[] args;
 
             msgReturn = "";
@@ -79,7 +80,16 @@ namespace TelegramBot.Util.Bot
                     msgReturn = GetHelp(args);
                     break;
                 default:
-                    msgReturn = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요.";
+                    //msgReturn = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요.";
+                    if (args.Length > 1)
+                    {
+                        msgReturn = methods.ExecutePythonCommand(args[0], args[1]);
+                    }
+                    else
+                    {
+                        msgReturn = methods.ExecutePythonCommand(args[0], "");
+                    }
+
                     break;
             }
 

@@ -1,11 +1,10 @@
 import pyowm
-from geopy.geocoders import Nominatim
+import geocoder
 
 def getWeatherByLocation(locName):
-    owm = pyowm.OWM('apikey')
+    owm = pyowm.OWM('66f28d2dcd23faa6b28feb63934c0b37')
 
-    geocoder = Nominatim()
-    locInfo = geocoder.geocode(locName)
+    locInfo = geocoder.google(locName)
 
     foundLocName = str.format("{0},{1}", locInfo.city, locInfo.country_long)
     foundLocName = foundLocName.replace('None', '')

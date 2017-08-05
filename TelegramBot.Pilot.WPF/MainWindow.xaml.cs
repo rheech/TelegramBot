@@ -29,14 +29,18 @@ namespace TelegramBot.Pilot.WPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SettingsManager mgr = new SettingsManager("CheongBot");
+            /*SettingsManager mgr = new SettingsManager("CheongBot");
 
             //MessageBox.Show(mgr.BotToken);
 
             MessageCommunicator comm = new MessageCommunicator(mgr.BotToken);
 
-
             comm.SendMessage(mgr.DefaultRcpt, "Hello world!");
+             */
+
+            // Weather test
+            TelegramBot.Util.RPC.PyRPCMethods rpc = new Util.RPC.PyRPCMethods();
+            rpc.ExecutePythonCommand("날씨", "서울");
         }
     }
 }

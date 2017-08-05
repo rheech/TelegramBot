@@ -1,36 +1,34 @@
+from flask import Flask
+from flask import request
 from Module.PyRPCMethods import PyRPCMethods
-from IpcPythonCS.Communication.Pipe.PipeServer import PipeServer
+import json
+import os
 
-print("Waiting for clients.")
-server = PipeServer()
+# change working directory to current path (pycharm issue)
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-try:
-    # Pipe가 이미 열려 있을 경우 발생하는 그냥 application 종료.
-    server.WaitForConnection("pyrpcmethods")
-except:
-    exit()
+app = Flask(__name__)
 
-calc = PyRPCMethods(server)
+@app.route("/")
+def main():
+    return "Hello"
 
-#print("hello")
+@app.route("/main.php", methods=["GET", "POST"])
+def hello():
+    rtnStr = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요."
 
-## One time execution ##
-try:
-    while(True):
-        calc.ProcessFunctionCall()
-except:
-    print("Connection ended.")
-    server.Close()
-
-## Infinite execution ##
-'''
-while (True):
     try:
-        print("Connected.")
-        calc.ProcessFunctionCall()
+        result = json.loads(request.data.decode("utf-8"))
+
+        if (result["command"] == "날씨"):
+            method = PyRPCMethods()
+            rtnStr = method.GetWeatherByLocation(result["arg"])
+
+        print(result)
     except:
-        print("Closed. Waiting for upcoming clients.")
-        server.Close()
-        server.WaitForConnection("pyrpcmethods")
-        calc = PyRPCMethods(server)
-'''
+        pass
+
+    return rtnStr
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5050)
