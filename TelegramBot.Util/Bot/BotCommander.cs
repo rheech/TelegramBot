@@ -174,6 +174,7 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("사용법\r\n");
             sb.AppendFormat("/말해 <문장>: 입력한 말을 반복\r\n");
             sb.AppendFormat("/시간: 현재 시간 출력\r\n");
+            sb.AppendFormat("/날씨 <위치>: 특정 위치의 현재 날씨 출력\r\n");
             sb.AppendFormat("/version: 현재 버전 출력");
 
             return sb.ToString();
