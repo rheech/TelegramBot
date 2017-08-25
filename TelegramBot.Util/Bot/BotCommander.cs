@@ -72,6 +72,8 @@ namespace TelegramBot.Util.Bot
                 case "퇴근시간":
                     msgReturn = GetOffWorkTime(args);
                     break;
+                case "기능개선":
+                    break;
                 /*case "calc":
                     msgReturn = GetCalculator();
                     break;

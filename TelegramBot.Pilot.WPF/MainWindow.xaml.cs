@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TelegramBot.Util.Bot;
+using TelegramBot.Util.PostCommand;
 using TelegramBot.Util.Settings;
 
 namespace TelegramBot.Pilot.WPF
@@ -29,7 +30,11 @@ namespace TelegramBot.Pilot.WPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SettingsManager mgr = new SettingsManager("CheongBot");
+            MessageKeeper keeper = new MessageKeeper();
+
+            //keeper.SaveMessage("A", "A");
+
+            /*SettingsManager mgr = new SettingsManager("CheongBot");
 
             //MessageBox.Show(mgr.BotToken);
 
@@ -40,7 +45,7 @@ namespace TelegramBot.Pilot.WPF
             if (commander.ProcessCommand("/퇴근시간", out rtn))
             {
                 MessageBox.Show(rtn);
-            }
+            }*/
 
             //MessageCommunicator comm = new MessageCommunicator(mgr.BotToken);
 

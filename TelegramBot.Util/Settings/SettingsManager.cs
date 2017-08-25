@@ -96,5 +96,29 @@ namespace TelegramBot.Util.Settings
                 SaveSetting("DefaultRcpt", value.ToString());
             }
         }
+
+        public long RegisteredRoom1
+        {
+            get
+            {
+                return Int64.Parse(GetSetting("RegisteredRoom1"));
+            }
+            set
+            {
+                SaveSetting("RegisteredRoom1", value.ToString());
+            }
+        }
+
+        public long RegisteredRoom2
+        {
+            get
+            {
+                return Int64.Parse(GetSetting("RegisteredRoom2"));
+            }
+            set
+            {
+                SaveSetting("RegisteredRoom2", value.ToString());
+            }
+        }
     }
 }

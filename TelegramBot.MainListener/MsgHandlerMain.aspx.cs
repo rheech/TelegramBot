@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using TelegramBot.Util.Bot;
+using TelegramBot.Util.PostCommand;
 using TelegramBot.Util.Settings;
 
 namespace TelegramBot.MainListener
@@ -22,7 +23,7 @@ namespace TelegramBot.MainListener
             
             var Bot = new Telegram.Bot.TelegramBotClient(_settings.BotToken);
 
-            ChatMessage msg;
+            ChatMessage msg = null;
             BotCommander bot;
             string content = "";
             long defaultRcpt = _settings.DefaultRcpt;
@@ -36,6 +37,16 @@ namespace TelegramBot.MainListener
                     msg = ChatMessage.FromJsonString(content);
 
                     defaultRcpt = msg.Message.Chat.ID;
+
+                    // Save message before the process (only for registered room)
+                    if (msg.Message.Chat.ID == _settings.RegisteredRoom1)
+                    {
+                        SaveMessage(msg, "messages");
+                    }
+                    else if (msg.Message.Chat.ID == _settings.RegisteredRoom2)
+                    {
+                        SaveMessage(msg, "test.messages");
+                    }
 
                     bot = new BotCommander(_settings);
 
@@ -52,6 +63,23 @@ namespace TelegramBot.MainListener
             {
                 Bot.SendTextMessageAsync(defaultRcpt, ex.ToString());
                 Bot.SendTextMessageAsync(defaultRcpt, content);
+            }
+        }
+
+        private void SaveMessage(ChatMessage msgInfo, string tableName)
+        {
+            try
+            {
+                MessageKeeper keeper = new MessageKeeper();
+
+                if (msgInfo != null)
+                {
+                    keeper.SaveMessage(msgInfo, tableName);
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }
