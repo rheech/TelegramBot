@@ -20,6 +20,11 @@ namespace TelegramBot.Util.Bot
             public string FirstName;
             public string LastName;
             public string LanguageCode;
+
+            public override string ToString()
+            {
+                return String.Format("{0} {1}", FirstName, LastName).Trim();
+            }
         }
 
         public struct _ChatInfo

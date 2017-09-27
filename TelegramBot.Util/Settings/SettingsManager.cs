@@ -120,5 +120,66 @@ namespace TelegramBot.Util.Settings
                 SaveSetting("RegisteredRoom2", value.ToString());
             }
         }
+
+
+        public string OracleURL
+        {
+            get
+            {
+                return GetSetting("OracleURL");
+            }
+            set
+            {
+                SaveSetting("OracleURL", value.ToString());
+            }
+        }
+
+        public int OraclePort
+        {
+            get
+            {
+                return Int32.Parse(GetSetting("OraclePort"));
+            }
+            set
+            {
+                SaveSetting("OraclePort", value.ToString());
+            }
+        }
+
+        public string OracleDBName
+        {
+            get
+            {
+                return GetSetting("OracleDBName");
+            }
+            set
+            {
+                SaveSetting("OracleDBName", value);
+            }
+        }
+
+        public string OracleUserName
+        {
+            get
+            {
+                return GetSetting("OracleUserName");
+            }
+            set
+            {
+                SaveSetting("OracleUserName", value);
+            }
+        }
+
+        public string OracleUserPassword
+        {
+            get
+            {
+                return GetSetting("OracleUserPassword");
+            }
+            set
+            {
+                SaveSetting("OracleUserPassword", value);
+            }
+        }
     }
 }

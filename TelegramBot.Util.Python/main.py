@@ -26,6 +26,7 @@ def hello():
 
         print(result)
     except:
+        rtnStr = "해당 지역의 날씨 정보를 받아올 수 없습니다."
         pass
 
     return rtnStr

@@ -52,10 +52,22 @@ namespace TelegramBot.MainListener
 
                     string msgReturn;
                     
-                    if (bot.ProcessCommand(msg.Message.Text, out msgReturn))
+                    if (bot.ProcessCommand(msg.Message.From.ToString(), msg.Message.Text, out msgReturn))
                     {
                         //Bot.SendTextMessageAsync(msg.Message.Chat.ID, msgReturn);
                         _comm.SendMessage(msg.Message.Chat.ID, msgReturn);
+                    }
+                    else
+                    {
+                        BotAutoReply botAutoReply;
+                        botAutoReply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
+
+                        string reply = botAutoReply.FindMessage(msg.Message.Text);
+
+                        if (reply != "")
+                        {
+                            _comm.SendMessage(msg.Message.Chat.ID, reply);
+                        }
                     }
                 }
             }

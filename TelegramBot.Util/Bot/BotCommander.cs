@@ -43,7 +43,7 @@ namespace TelegramBot.Util.Bot
             throw new Exception("Error occurred while parsing command");
         }
 
-        public bool ProcessCommand(string requestedMessage, out string msgReturn)
+        public bool ProcessCommand(string author, string requestedMessage, out string msgReturn)
         {
             PyRPCMethods methods = new PyRPCMethods();
             string[] args;
@@ -73,6 +73,12 @@ namespace TelegramBot.Util.Bot
                     msgReturn = GetOffWorkTime(args);
                     break;
                 case "기능개선":
+                    break;
+                case "학습":
+                    msgReturn = LearnWord(author, requestedMessage);
+                    break;
+                case "키워드":
+                    msgReturn = RetrieveAllKeywords();
                     break;
                 /*case "calc":
                     msgReturn = GetCalculator();
@@ -108,6 +114,26 @@ namespace TelegramBot.Util.Bot
             return true;
         }
 
+        private string LearnWord(string author, string requestedMessage)
+        {
+            BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
+
+            requestedMessage = requestedMessage.Split(new[] {' '}, 2)[1];
+
+            string[] args = requestedMessage.Split(new[] {'/'}, 2);
+
+            reply.RegisterMessage(author, args[0], args[1]);
+
+            return String.Format("학습 완료: {0}, {1}", args[0], args[1]);
+        }
+
+        private string RetrieveAllKeywords()
+        {
+            BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
+
+            return reply.RetrieveAllKeywords();
+        }
+
         private string GetOffWorkTime(string[] args)
         {
             TimeSpan span;
@@ -129,7 +155,7 @@ namespace TelegramBot.Util.Bot
             }
             else
             {
-                result = String.Format("퇴근 시간으로부터 {0}시간 {1}분 {2}초 경과하였습니다. 야근중이신가요?", -1 * span.Hours, -1 * span.Minutes, -1 * span.Seconds);
+                result = String.Format("퇴근 시간으로부터 {0}시간 {1}분 {2}초 경과하였습니다. 퇴근하셨습니다.", -1 * span.Hours, -1 * span.Minutes, -1 * span.Seconds);
             }
 
             return result;
@@ -215,6 +241,8 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/날씨 <위치>: 특정 위치의 현재 날씨 출력\r\n");
             sb.AppendFormat("/시간: 현재 시간 출력\r\n");
             sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
+            sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
+            sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
             sb.AppendFormat("/version: 현재 버전 출력");
 
             return sb.ToString();
