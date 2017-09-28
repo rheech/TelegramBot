@@ -80,7 +80,7 @@ namespace TelegramBot.Util.Bot
                 case "키워드":
                     msgReturn = RetrieveAllKeywords();
                     break;
-                case "키워드삭제":
+                /*case "키워드삭제":
                     msgReturn = DeleteKeyword(args);
                     break;
                 /*case "calc":
@@ -274,7 +274,7 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
             sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
-            sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
+            //sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
             sb.AppendFormat("/version: 현재 버전 출력");
 
             return sb.ToString();

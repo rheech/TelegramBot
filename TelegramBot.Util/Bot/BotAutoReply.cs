@@ -39,9 +39,16 @@ namespace TelegramBot.Util.Bot
             return sb.ToString();
         }
 
+        private string GetSafeQuery(string sql)
+        {
+            return sql.Replace("'", "").Replace("`", "");
+        }
+
         public void RegisterMessage(string author, string message, string reply)
         {
             // INSERT INTO table (id, name, age) VALUES(1, "A", 19) ON DUPLICATE KEY UPDATE name="A", age=19
+
+            message = GetSafeQuery(message);
 
             // remove trim() method & prevent sql injection on reply
             _cmd.CommandText = String.Format("INSERT INTO `autoreply` (Author, Message, Reply, RegTime) VALUES ('{0}', '{1}', '{2}', NOW()) ON DUPLICATE KEY UPDATE Author = '{0}', Message = '{1}', Reply = '{2}';",
@@ -53,6 +60,7 @@ namespace TelegramBot.Util.Bot
         public void DeleteMessage(string message)
         {
             // INSERT INTO table (id, name, age) VALUES(1, "A", 19) ON DUPLICATE KEY UPDATE name="A", age=19
+            message = GetSafeQuery(message);
 
             // remove trim() method & prevent sql injection on reply
             _cmd.CommandText = String.Format("DELETE FROM `autoreply` WHERE Message = '{0}'", message.Trim());
@@ -63,6 +71,8 @@ namespace TelegramBot.Util.Bot
         public string FindMessage(string message)
         {
             string rtn = "";
+
+            message = GetSafeQuery(message);
 
             _cmd.CommandText = String.Format("SELECT * FROM `autoreply` WHERE `Message` = '{0}';", message.Trim());
 
