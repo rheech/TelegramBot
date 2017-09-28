@@ -43,8 +43,19 @@ namespace TelegramBot.Util.Bot
         {
             // INSERT INTO table (id, name, age) VALUES(1, "A", 19) ON DUPLICATE KEY UPDATE name="A", age=19
 
+            // remove trim() method & prevent sql injection on reply
             _cmd.CommandText = String.Format("INSERT INTO `autoreply` (Author, Message, Reply, RegTime) VALUES ('{0}', '{1}', '{2}', NOW()) ON DUPLICATE KEY UPDATE Author = '{0}', Message = '{1}', Reply = '{2}';",
-                        author, message.Trim(), reply.Trim());
+                        author, message.Trim(), reply.Replace("'", "''"));
+
+            _cmd.ExecuteNonQuery();
+        }
+
+        public void DeleteMessage(string message)
+        {
+            // INSERT INTO table (id, name, age) VALUES(1, "A", 19) ON DUPLICATE KEY UPDATE name="A", age=19
+
+            // remove trim() method & prevent sql injection on reply
+            _cmd.CommandText = String.Format("DELETE FROM `autoreply` WHERE Message = '{0}'", message.Trim());
 
             _cmd.ExecuteNonQuery();
         }
@@ -59,7 +70,8 @@ namespace TelegramBot.Util.Bot
             {
                 if (rdr.Read())
                 {
-                    rtn = String.Format("[{0}] {1}", rdr["Author"], rdr["Reply"]);
+                    //rtn = String.Format("[{0}] {1}", rdr["Author"], rdr["Reply"]);
+                    rtn = String.Format("{1}", rdr["Author"], rdr["Reply"]);
                 }
             }
 

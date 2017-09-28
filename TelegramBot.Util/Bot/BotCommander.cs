@@ -80,6 +80,9 @@ namespace TelegramBot.Util.Bot
                 case "키워드":
                     msgReturn = RetrieveAllKeywords();
                     break;
+                case "키워드삭제":
+                    msgReturn = DeleteKeyword(args);
+                    break;
                 /*case "calc":
                     msgReturn = GetCalculator();
                     break;
@@ -118,13 +121,20 @@ namespace TelegramBot.Util.Bot
         {
             BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
 
-            requestedMessage = requestedMessage.Split(new[] {' '}, 2)[1];
+            try
+            {
+                requestedMessage = requestedMessage.Split(new[] { ' ' }, 2)[1];
 
-            string[] args = requestedMessage.Split(new[] {'/'}, 2);
+                string[] args = requestedMessage.Split(new[] { '/' }, 2);
 
-            reply.RegisterMessage(author, args[0], args[1]);
+                reply.RegisterMessage(author, args[0], args[1]);
 
-            return String.Format("학습 완료: {0}, {1}", args[0], args[1]);
+                return String.Format("학습 완료: {0}, {1}", args[0], args[1]);
+            }
+            catch (Exception)
+            {
+                return "학습: 입력 포맷이 잘못되었습니다.\r\n사용법 예시: /학습 안녕/헬로";
+            }
         }
 
         private string RetrieveAllKeywords()
@@ -132,6 +142,27 @@ namespace TelegramBot.Util.Bot
             BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
 
             return reply.RetrieveAllKeywords();
+        }
+
+        private string DeleteKeyword(string[] args)
+        {
+            BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
+
+            if (args.Length > 1)
+            {
+                try
+                {
+                    reply.DeleteMessage(args[1]);
+
+                    return String.Format("키워드 삭제 완료: {0}", args[1]);
+                }
+                catch (Exception)
+                {
+                    return String.Format("키워드삭제: '{0}' 삭제 중 오류가 발생하였습니다.", args[1]);
+                }
+            }
+
+            return "오류: 입력 값 없음";
         }
 
         private string GetOffWorkTime(string[] args)
@@ -243,6 +274,7 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
             sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
+            sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
             sb.AppendFormat("/version: 현재 버전 출력");
 
             return sb.ToString();
