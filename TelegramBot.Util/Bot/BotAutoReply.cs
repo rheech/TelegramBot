@@ -18,16 +18,20 @@ namespace TelegramBot.Util.Bot
         public string RetrieveAllKeywords()
         {
             string rtn = "";
+            int count = 0;
 
             _cmd.CommandText = String.Format("SELECT * FROM `autoreply`;");
 
             StringBuilder sb = new StringBuilder();
+
+            //sb.Append("키워드 목록:\r\n");
 
             using (MySqlDataReader rdr = _cmd.ExecuteReader())
             {
                 while (rdr.Read())
                 {
                     sb.AppendFormat("{0}\r\n", rdr["Message"]);
+                    count++;
                 }
 
                 if (sb.Length > 2)
@@ -36,7 +40,7 @@ namespace TelegramBot.Util.Bot
                 }
             }
 
-            return sb.ToString();
+            return String.Format("키워드 목록 (총 {0}개):\r\n{1}", count, sb.ToString());
         }
 
         private string GetSafeQuery(string sql)
