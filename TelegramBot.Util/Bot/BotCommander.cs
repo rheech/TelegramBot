@@ -80,8 +80,19 @@ namespace TelegramBot.Util.Bot
                 case "키워드":
                     msgReturn = RetrieveAllKeywords();
                     break;
-                /*case "키워드삭제":
+                case "키워드삭제":
                     msgReturn = DeleteKeyword(args);
+                    break;
+                case "구문분석":
+                    try
+                    {
+                        //msgReturn = String.Format("결과: {0}", TokenizeSentence(args));
+                        msgReturn = String.Format("미구현: {0}", args[1]);
+                    }
+                    catch (Exception ex)
+                    {
+                        msgReturn = ex.ToString();
+                    }
                     break;
                 /*case "calc":
                     msgReturn = GetCalculator();
@@ -117,6 +128,22 @@ namespace TelegramBot.Util.Bot
             return true;
         }
 
+        /*private string TokenizeSentence(string[] args)
+        {
+            StringBuilder result = new StringBuilder();
+            string sentence = args[1];
+
+            var tokens = TwitterKoreanProcessorCS.Tokenize(sentence);
+
+            foreach (var token in tokens)
+            {
+                result.AppendFormat(format: "{0}({1}) [{2},{3}] / ",
+                    args: new object[] { token.Text, token.Pos.ToString(), token.Offset, token.Length });
+            }
+
+            return result.ToString();
+        }*/
+
         private string LearnWord(string author, string requestedMessage)
         {
             BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
@@ -127,7 +154,7 @@ namespace TelegramBot.Util.Bot
 
                 string[] args = requestedMessage.Split(new[] { '/' }, 2);
 
-                reply.RegisterMessage(author, args[0], args[1]);
+                reply.RegisterMessage(author, args[0], System.Uri.EscapeUriString(args[1]));
 
                 return String.Format("학습 완료: {0}, {1}", args[0], args[1]);
             }
@@ -260,7 +287,7 @@ namespace TelegramBot.Util.Bot
 
         private string GetCurrentVersion(string[] args)
         {
-            return "0.0.2 Beta";
+            return "0.0.3 Beta";
         }
 
         private string GetHelp(string[] args)
@@ -274,8 +301,10 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
             sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
-            //sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
-            sb.AppendFormat("/version: 현재 버전 출력");
+            sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
+            sb.AppendFormat("/구문분석 <문장>: 문장 구문 분석\r\n");
+            sb.AppendFormat("/version: 현재 버전 출력\r\n");
+            sb.AppendFormat("※ 설명서에 적혀 있는 꺽쇠 < > 는 입력하지 않음.");
 
             return sb.ToString();
         }
