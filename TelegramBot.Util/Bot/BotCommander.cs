@@ -154,7 +154,7 @@ namespace TelegramBot.Util.Bot
 
                 string[] args = requestedMessage.Split(new[] { '/' }, 2);
 
-                reply.RegisterMessage(author, args[0], System.Uri.EscapeUriString(args[1]));
+                reply.RegisterMessage(author, args[0], args[1]);
 
                 return String.Format("학습 완료: {0}, {1}", args[0], args[1]);
             }

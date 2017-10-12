@@ -56,7 +56,7 @@ namespace TelegramBot.Util.Bot
 
             // remove trim() method & prevent sql injection on reply
             _cmd.CommandText = String.Format("INSERT INTO `autoreply` (Author, Message, Reply, RegTime) VALUES ('{0}', '{1}', '{2}', NOW()) ON DUPLICATE KEY UPDATE Author = '{0}', Message = '{1}', Reply = '{2}';",
-                        author, System.Uri.EscapeDataString(message.Trim()), reply.Replace("'", "''"));
+                        author, message.Trim(), System.Uri.EscapeDataString(reply.Replace("'", "&squot;")));
 
             _cmd.ExecuteNonQuery();
         }
@@ -85,7 +85,14 @@ namespace TelegramBot.Util.Bot
                 if (rdr.Read())
                 {
                     //rtn = String.Format("[{0}] {1}", rdr["Author"], rdr["Reply"]);
-                    rtn = String.Format("{1}", rdr["Author"], System.Uri.UnescapeDataString(rdr["Reply"].ToString()));
+                    try
+                    {
+                        rtn = String.Format("{1}", rdr["Author"], System.Uri.UnescapeDataString(rdr["Reply"].ToString()).Replace("&squot;", "'"));
+                    }
+                    catch (Exception)
+                    {
+                        rtn = String.Format("{1}", rdr["Author"], rdr["Reply"].ToString());
+                    }
                 }
             }
 
