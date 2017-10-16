@@ -34,7 +34,7 @@ namespace TelegramBot.Util.Bot
             if (IsCommand(requestedMessage))
             {
                 args = requestedMessage.Split(new string[] { " " }, 2, StringSplitOptions.None);
-                args[0] = args[0].Substring(1).ToLowerInvariant();
+                args[0] = args[0].Substring(1).ToLowerInvariant().Trim();
                 args[0] = args[0].Replace("@cheongbot", ""); // remove unnecessary bot's name in command
 
                 return args;
@@ -75,7 +75,7 @@ namespace TelegramBot.Util.Bot
                 case "기능개선":
                     break;
                 case "학습":
-                    msgReturn = LearnWord(author, requestedMessage);
+                    msgReturn = LearnWord(author, requestedMessage.Trim());
                     break;
                 case "키워드":
                     msgReturn = RetrieveAllKeywords();
@@ -153,6 +153,14 @@ namespace TelegramBot.Util.Bot
                 requestedMessage = requestedMessage.Split(new[] { ' ' }, 2)[1];
 
                 string[] args = requestedMessage.Split(new[] { '/' }, 2);
+
+                args[0] = args[0].Trim();
+                args[1] = args[1].Trim();
+
+                if (args[0].Length == 0 || args[1].Length == 0)
+                {
+                    throw new Exception("No argument error");
+                }
 
                 reply.RegisterMessage(author, args[0], args[1]);
 
