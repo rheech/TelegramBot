@@ -36,7 +36,7 @@ namespace TelegramBot.MainListener
                     
                     msg = ChatMessage.FromJsonString(content);
 
-                    defaultRcpt = msg.Message.Chat.ID;
+                    //defaultRcpt = msg.Message.Chat.ID;
 
                     // Save message before the process (only for registered room)
                     if (msg.Message.Chat.ID == _settings.RegisteredRoom1)
