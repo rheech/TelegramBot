@@ -1,10 +1,13 @@
-﻿//using IpcPythonCS.Engine.CSharp;
+﻿using HtmlAgilityPack;
+//using IpcPythonCS.Engine.CSharp;
 //using IpcPythonCS.Engine.CSharp.Communication.Pipe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TelegramBot.Util.Bot.Tool;
 using TelegramBot.Util.RPC;
 using TelegramBot.Util.Settings;
 
@@ -34,7 +37,7 @@ namespace TelegramBot.Util.Bot
             if (IsCommand(requestedMessage))
             {
                 args = requestedMessage.Split(new string[] { " " }, 2, StringSplitOptions.None);
-                args[0] = args[0].Substring(1).ToLowerInvariant();
+                args[0] = args[0].Substring(1).ToLowerInvariant().Trim();
                 args[0] = args[0].Replace("@cheongbot", ""); // remove unnecessary bot's name in command
 
                 return args;
@@ -75,7 +78,7 @@ namespace TelegramBot.Util.Bot
                 case "기능개선":
                     break;
                 case "학습":
-                    msgReturn = LearnWord(author, requestedMessage);
+                    msgReturn = LearnWord(author, requestedMessage.Trim());
                     break;
                 case "키워드":
                     msgReturn = RetrieveAllKeywords();
@@ -83,7 +86,10 @@ namespace TelegramBot.Util.Bot
                 case "키워드삭제":
                     msgReturn = DeleteKeyword(args);
                     break;
-                case "구문분석":
+                case "검색":
+                    msgReturn = SearchNaverBlog(args);
+                    break;
+                /*case "구문분석":
                     try
                     {
                         //msgReturn = String.Format("결과: {0}", TokenizeSentence(args));
@@ -144,6 +150,44 @@ namespace TelegramBot.Util.Bot
             return result.ToString();
         }*/
 
+        private string SearchNaverBlog(string[] args)
+        {
+            try
+            {
+                SearchEngine engine = new SearchEngine(_settings.NaverAPIClientID, _settings.NaverAPIClientSecret);
+                SearchEngine.SearchResult result = engine.SearchNaverBlog(args[1]);
+
+                string html;
+                string desc;
+                int maxLen;
+
+                desc = result.items[0].description;
+
+                if (desc.Length > 200)
+                {
+                    maxLen = 200; 
+                }
+                else
+                {
+                    maxLen = desc.Length;
+                }
+
+                html = String.Format("{0}\r\n{1}\r\n{2}\r\n{3}", result.items[0].title, result.items[0].description.Substring(0, maxLen), result.items[0].link, result.items[0].postdate); ;
+
+                html = WebUtility.HtmlDecode(html);
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(html);
+
+                return htmlDoc.DocumentNode.InnerText;
+            }
+            catch (Exception ex)
+            {
+                return "검색 엔진 오류.";
+            }
+
+            
+        }
+
         private string LearnWord(string author, string requestedMessage)
         {
             BotAutoReply reply = new BotAutoReply(_settings.OracleURL, _settings.OraclePort, _settings.OracleDBName, _settings.OracleUserName, _settings.OracleUserPassword);
@@ -153,6 +197,14 @@ namespace TelegramBot.Util.Bot
                 requestedMessage = requestedMessage.Split(new[] { ' ' }, 2)[1];
 
                 string[] args = requestedMessage.Split(new[] { '/' }, 2);
+
+                args[0] = args[0].Trim();
+                args[1] = args[1].Trim();
+
+                if (args[0].Length == 0 || args[1].Length == 0)
+                {
+                    throw new Exception("No argument error");
+                }
 
                 reply.RegisterMessage(author, args[0], args[1]);
 
@@ -297,12 +349,13 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("사용법\r\n");
             sb.AppendFormat("/말해 <문장>: 입력한 말을 반복\r\n");
             sb.AppendFormat("/날씨 <위치>: 특정 위치의 현재 날씨 출력\r\n");
+            sb.AppendFormat("/검색 <키워드>: 네이버 블로그 검색 결과 출력\r\n");
             sb.AppendFormat("/시간: 현재 시간 출력\r\n");
             sb.AppendFormat("/퇴근시간: 남은 퇴근 시간 출력\r\n");
             sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
             sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
-            sb.AppendFormat("/구문분석 <문장>: 문장 구문 분석\r\n");
+            //sb.AppendFormat("/구문분석 <문장>: 문장 구문 분석\r\n");
             sb.AppendFormat("/version: 현재 버전 출력\r\n");
             sb.AppendFormat("※ 설명서에 적혀 있는 꺽쇠 < > 는 입력하지 않음.");
 

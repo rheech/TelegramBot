@@ -181,5 +181,29 @@ namespace TelegramBot.Util.Settings
                 SaveSetting("OracleUserPassword", value);
             }
         }
+
+        public string NaverAPIClientID
+        {
+            get
+            {
+                return GetSetting("NaverAPIClientID");
+            }
+            set
+            {
+                SaveSetting("NaverAPIClientID", value);
+            }
+        }
+
+        public string NaverAPIClientSecret
+        {
+            get
+            {
+                return GetSetting("NaverAPIClientSecret");
+            }
+            set
+            {
+                SaveSetting("NaverAPIClientSecret", value);
+            }
+        }
     }
 }
