@@ -30,7 +30,12 @@ namespace TelegramBot.Pilot.WPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageKeeper keeper = new MessageKeeper();
+            //MessageKeeper keeper = new MessageKeeper();
+
+            SettingsManager _settings = new SettingsManager("CheongBot");
+            MessageBox.Show(_settings.LastQueriedDate.Ticks.ToString());
+
+            _settings.LastQueriedDate = DateTime.Now;
 
             //keeper.SaveMessage("A", "A");
 

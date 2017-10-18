@@ -43,6 +43,7 @@ namespace TelegramBot.Util.Bot
                 return args;
             }
 
+
             throw new Exception("Error occurred while parsing command");
         }
 
@@ -53,82 +54,99 @@ namespace TelegramBot.Util.Bot
 
             msgReturn = "";
 
-            // Process only if the message begins with "/" (command)
-            if (!IsCommand(requestedMessage))
+            if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(3))
             {
-                return false;
+                // Process only if the message begins with "/" (command)
+                if (!IsCommand(requestedMessage))
+                {
+                    return false;
+                }
+
+                _settings.LastQueriedDate = DateTime.Now;
+
+                args = ParseCommand(requestedMessage);
+
+                switch (args[0])
+                {
+                    case "말해":
+                        msgReturn = GetSayItCommand(args);
+                        break;
+                    case "시간":
+                        msgReturn = GetCurrentTime(args);
+                        break;
+                    case "version":
+                        msgReturn = GetCurrentVersion(args);
+                        break;
+                    case "퇴근시간":
+                        msgReturn = GetOffWorkTime(args);
+                        break;
+                    case "기능개선":
+                        break;
+                    case "학습":
+                        msgReturn = LearnWord(author, requestedMessage.Trim());
+                        break;
+                    case "키워드":
+                        msgReturn = RetrieveAllKeywords();
+                        break;
+                    case "키워드삭제":
+                        msgReturn = DeleteKeyword(args);
+                        break;
+                    case "검색":
+                        msgReturn = SearchNaverBlog(args);
+                        break;
+                    /*case "구문분석":
+                        try
+                        {
+                            //msgReturn = String.Format("결과: {0}", TokenizeSentence(args));
+                            msgReturn = String.Format("미구현: {0}", args[1]);
+                        }
+                        catch (Exception ex)
+                        {
+                            msgReturn = ex.ToString();
+                        }
+                        break;
+                    /*case "calc":
+                        msgReturn = GetCalculator();
+                        break;
+                    case "날씨":
+                        msgReturn = GetWeatherByLocation(args);
+                        break;*/
+                    case "?":
+                    case "help":
+                        msgReturn = GetHelp(args);
+                        break;
+                    default:
+                        //msgReturn = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요.";
+                        try
+                        {
+                            if (args.Length > 1)
+                            {
+                                msgReturn = methods.ExecutePythonCommand(args[0], args[1]);
+                            }
+                            else
+                            {
+                                msgReturn = methods.ExecutePythonCommand(args[0], "");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            msgReturn = String.Format("{0}: RPC 오류입니다. 잠시 후에 다시 시도해 주세요.", args[0]);
+                        }
+
+                        break;
+                }
             }
-
-            args = ParseCommand(requestedMessage);
-
-            switch (args[0])
+            else
             {
-                case "말해":
-                    msgReturn = GetSayItCommand(args);
-                    break;
-                case "시간":
-                    msgReturn = GetCurrentTime(args);
-                    break;
-                case "version":
-                    msgReturn = GetCurrentVersion(args);
-                    break;
-                case "퇴근시간":
-                    msgReturn = GetOffWorkTime(args);
-                    break;
-                case "기능개선":
-                    break;
-                case "학습":
-                    msgReturn = LearnWord(author, requestedMessage.Trim());
-                    break;
-                case "키워드":
-                    msgReturn = RetrieveAllKeywords();
-                    break;
-                case "키워드삭제":
-                    msgReturn = DeleteKeyword(args);
-                    break;
-                case "검색":
-                    msgReturn = SearchNaverBlog(args);
-                    break;
-                /*case "구문분석":
-                    try
-                    {
-                        //msgReturn = String.Format("결과: {0}", TokenizeSentence(args));
-                        msgReturn = String.Format("미구현: {0}", args[1]);
-                    }
-                    catch (Exception ex)
-                    {
-                        msgReturn = ex.ToString();
-                    }
-                    break;
-                /*case "calc":
-                    msgReturn = GetCalculator();
-                    break;
-                case "날씨":
-                    msgReturn = GetWeatherByLocation(args);
-                    break;*/
-                case "?":
-                case "help":
-                    msgReturn = GetHelp(args);
-                    break;
-                default:
-                    //msgReturn = "지원하지 않는 명령어 입니다. /? 또는 /help 를 입력하여 사용법을 확인하세요.";
-                    try
-                    {
-                        if (args.Length > 1)
-                        {
-                            msgReturn = methods.ExecutePythonCommand(args[0], args[1]);
-                        }
-                        else
-                        {
-                            msgReturn = methods.ExecutePythonCommand(args[0], "");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        msgReturn = String.Format("{0}: RPC 오류입니다. 잠시 후에 다시 시도해 주세요.", args[0]);
-                    }
-
-                    break;
+                if (DateTime.Now - _settings.LastWarnedDate > TimeSpan.FromSeconds(3))
+                {
+                    msgReturn = "";
+                }
+                else
+                {
+                    _settings.LastWarnedDate = DateTime.Now;
+                    msgReturn = "3초에 한번반 쿼리 가능합니다.";
+                }
             }
 
             return true;

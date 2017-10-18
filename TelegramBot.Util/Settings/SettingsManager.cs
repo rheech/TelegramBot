@@ -205,5 +205,51 @@ namespace TelegramBot.Util.Settings
                 SaveSetting("NaverAPIClientSecret", value);
             }
         }
+
+        public DateTime LastQueriedDate
+        {
+            get
+            {
+                long timeTick;
+                
+                try
+                {
+                    timeTick = Int64.Parse(GetSetting("LastQueriedDate"));
+                }
+                catch (Exception ex)
+                {
+                    timeTick = 0;
+                }
+
+                return new DateTime(timeTick);
+            }
+            set
+            {
+                SaveSetting("LastQueriedDate", value.Ticks.ToString());
+            }
+        }
+
+        public DateTime LastWarnedDate
+        {
+            get
+            {
+                long timeTick;
+
+                try
+                {
+                    timeTick = Int64.Parse(GetSetting("LastWarnedDate"));
+                }
+                catch (Exception ex)
+                {
+                    timeTick = 0;
+                }
+
+                return new DateTime(timeTick);
+            }
+            set
+            {
+                SaveSetting("LastWarnedDate", value.Ticks.ToString());
+            }
+        }
     }
 }

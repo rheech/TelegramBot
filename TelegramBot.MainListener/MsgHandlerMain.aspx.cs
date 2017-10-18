@@ -55,7 +55,10 @@ namespace TelegramBot.MainListener
                     if (bot.ProcessCommand(msg.Message.From.ToString(), msg.Message.Text, out msgReturn))
                     {
                         //Bot.SendTextMessageAsync(msg.Message.Chat.ID, msgReturn);
-                        _comm.SendMessage(msg.Message.Chat.ID, msgReturn);
+                        if (msgReturn != "")
+                        {
+                            _comm.SendMessage(msg.Message.Chat.ID, msgReturn);
+                        }
                     }
                     else
                     {
