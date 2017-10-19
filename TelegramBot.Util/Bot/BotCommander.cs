@@ -56,14 +56,20 @@ namespace TelegramBot.Util.Bot
 
             int msgDelay = _settings.MessageDelay;
 
-            // Process only if the message begins with "/" (command)
-            if (!IsCommand(requestedMessage))
-            {
-                return false;
-            }
-
             if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(msgDelay))
             {
+                if (_settings.BotStopped)
+                {
+                    _settings.BotStopped = false;
+                    _settings.MessageDelay = _settings.MessageDelayDefault;
+                }
+
+                // Process only if the message begins with "/" (command)
+                if (!IsCommand(requestedMessage))
+                {
+                    return false;
+                }
+
                 _settings.LastQueriedDate = DateTime.Now;
 
                 args = ParseCommand(requestedMessage);
@@ -95,6 +101,9 @@ namespace TelegramBot.Util.Bot
                         break;
                     case "검색":
                         msgReturn = SearchNaverBlog(args);
+                        break;
+                    case "나가":
+                        msgReturn = StopBot(args);
                         break;
                     /*case "구문분석":
                         try
@@ -170,6 +179,16 @@ namespace TelegramBot.Util.Bot
             return result.ToString();
         }*/
 
+        private string StopBot(string[] args)
+        {
+            _settings.MessageDelayDefault = _settings.MessageDelay;
+            _settings.MessageDelay = 600;
+            _settings.LastWarnedDate = DateTime.Now;
+            _settings.BotStopped = true;
+            
+            return "10분간 봇의 작동을 중지합니다.";
+        }
+
         private string SearchNaverBlog(string[] args)
         {
             try
@@ -185,7 +204,7 @@ namespace TelegramBot.Util.Bot
 
                 if (desc.Length > 200)
                 {
-                    maxLen = 200; 
+                    maxLen = 200;
                 }
                 else
                 {
@@ -205,7 +224,7 @@ namespace TelegramBot.Util.Bot
                 return "검색 엔진 오류.";
             }
 
-            
+
         }
 
         private string LearnWord(string author, string requestedMessage)
@@ -375,6 +394,7 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/학습 <키워드1>/<키워드2>: <키워드1>을 입력 시 <키워드2>를 출력\r\n");
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
             sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
+            sb.AppendFormat("/나가: 도배 방지 기능. 10분간 작동 정지.\r\n");
             //sb.AppendFormat("/구문분석 <문장>: 문장 구문 분석\r\n");
             sb.AppendFormat("/version: 현재 버전 출력\r\n");
             sb.AppendFormat("※ 설명서에 적혀 있는 꺽쇠 < > 는 입력하지 않음.");

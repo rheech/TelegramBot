@@ -61,6 +61,25 @@ namespace TelegramBot.Util.Settings
             }
         }
 
+        public bool BotStopped
+        {
+            get
+            {
+                try
+                {
+                    return bool.Parse(GetSetting("BotStopped"));
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                SaveSetting("BotStopped", value.ToString());
+            }
+        }
+
         public string PythonExePath
         {
             get
@@ -265,7 +284,6 @@ namespace TelegramBot.Util.Settings
                 catch (Exception ex)
                 {
                     msgDelay = 5;
-                    MessageDelay = 5;
                 }
 
                 return msgDelay;
@@ -273,6 +291,29 @@ namespace TelegramBot.Util.Settings
             set
             {
                 SaveSetting("MessageDelay", value.ToString());
+            }
+        }
+
+        public int MessageDelayDefault
+        {
+            get
+            {
+                int msgDelay;
+
+                try
+                {
+                    msgDelay = Int32.Parse(GetSetting("MessageDelayDefault"));
+                }
+                catch (Exception ex)
+                {
+                    msgDelay = 5;
+                }
+
+                return msgDelay;
+            }
+            set
+            {
+                SaveSetting("MessageDelayDefault", value.ToString());
             }
         }
     }
