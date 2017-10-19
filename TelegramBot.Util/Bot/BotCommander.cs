@@ -54,7 +54,9 @@ namespace TelegramBot.Util.Bot
 
             msgReturn = "";
 
-            if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(3))
+            int msgDelay = _settings.MessageDelay;
+
+            if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(msgDelay))
             {
                 // Process only if the message begins with "/" (command)
                 if (!IsCommand(requestedMessage))
@@ -138,14 +140,14 @@ namespace TelegramBot.Util.Bot
             }
             else
             {
-                if (DateTime.Now - _settings.LastWarnedDate > TimeSpan.FromSeconds(3))
+                if (DateTime.Now - _settings.LastWarnedDate <= TimeSpan.FromSeconds(msgDelay))
                 {
                     msgReturn = "";
                 }
                 else
                 {
                     _settings.LastWarnedDate = DateTime.Now;
-                    msgReturn = "3초에 한번반 쿼리 가능합니다.";
+                    msgReturn = String.Format("도배 방지를 위해 {0}초에 한번만 쿼리 가능합니다.", msgDelay);
                 }
             }
 

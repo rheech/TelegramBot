@@ -251,5 +251,29 @@ namespace TelegramBot.Util.Settings
                 SaveSetting("LastWarnedDate", value.Ticks.ToString());
             }
         }
+
+        public int MessageDelay
+        {
+            get
+            {
+                int msgDelay;
+
+                try
+                {
+                    msgDelay = Int32.Parse(GetSetting("MessageDelay"));
+                }
+                catch (Exception ex)
+                {
+                    msgDelay = 5;
+                    MessageDelay = 5;
+                }
+
+                return msgDelay;
+            }
+            set
+            {
+                SaveSetting("MessageDelay", value.ToString());
+            }
+        }
     }
 }
