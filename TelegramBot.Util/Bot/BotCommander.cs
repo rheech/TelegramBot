@@ -56,14 +56,14 @@ namespace TelegramBot.Util.Bot
 
             int msgDelay = _settings.MessageDelay;
 
+            // Process only if the message begins with "/" (command)
+            if (!IsCommand(requestedMessage))
+            {
+                return false;
+            }
+
             if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(msgDelay))
             {
-                // Process only if the message begins with "/" (command)
-                if (!IsCommand(requestedMessage))
-                {
-                    return false;
-                }
-
                 _settings.LastQueriedDate = DateTime.Now;
 
                 args = ParseCommand(requestedMessage);
