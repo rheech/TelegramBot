@@ -30,6 +30,11 @@ namespace TelegramBot.Util.Bot
             return requestedMessage.Length > 0 && requestedMessage.Substring(0, 1) == "/";
         }
 
+        private bool IsReturnBotCommand(string requestedMessage)
+        {
+            return (requestedMessage.Split(' ')[0] == "/돌아와");
+        }
+
         private string[] ParseCommand(string requestedMessage)
         {
             string[] args = null;
@@ -56,7 +61,18 @@ namespace TelegramBot.Util.Bot
 
             int msgDelay = _settings.MessageDelay;
 
-            if (DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(msgDelay))
+            // 돌아와 command
+            if (IsReturnBotCommand(requestedMessage))
+            {
+                _settings.BotStopped = false;
+                _settings.MessageDelay = _settings.MessageDelayDefault;
+
+                msgReturn = ReturnBot();
+
+                return true;
+            }
+
+            if ((DateTime.Now - _settings.LastQueriedDate > TimeSpan.FromSeconds(msgDelay)))
             {
                 if (_settings.BotStopped)
                 {
@@ -103,7 +119,7 @@ namespace TelegramBot.Util.Bot
                         msgReturn = SearchNaverBlog(args);
                         break;
                     case "나가":
-                        msgReturn = StopBot(args);
+                        msgReturn = StopBot(author, args);
                         break;
                     /*case "구문분석":
                         try
@@ -179,14 +195,27 @@ namespace TelegramBot.Util.Bot
             return result.ToString();
         }*/
 
-        private string StopBot(string[] args)
+        private string ReturnBot()
         {
-            _settings.MessageDelayDefault = _settings.MessageDelay;
-            _settings.MessageDelay = 600;
-            _settings.LastWarnedDate = DateTime.Now;
-            _settings.BotStopped = true;
-            
-            return "10분간 봇의 작동을 중지합니다.";
+            return "일시중지를 해제합니다.";
+        }
+
+        private string StopBot(string author, string[] args)
+        {
+            if (_settings.LastBlocker != author || true) // 동일 유저 기능 잠시 사용 안함.
+            {
+                _settings.MessageDelayDefault = _settings.MessageDelay;
+                _settings.MessageDelay = 600;
+                _settings.LastWarnedDate = DateTime.Now;
+                _settings.BotStopped = true;
+                _settings.LastBlocker = author;
+
+                return "10분간 봇의 작동을 중지합니다.";
+            }
+            else
+            {
+                return "동일한 유저가 연속으로 중지할 수 없습니다.";
+            }
         }
 
         private string SearchNaverBlog(string[] args)
@@ -244,6 +273,17 @@ namespace TelegramBot.Util.Bot
                 {
                     throw new Exception("No argument error");
                 }
+
+                // 금칙어 처리 (임시구현)
+                /*if (args[0].Contains("ㅋ"))
+                {
+                    string wordCheck = args[0];
+
+                    if (wordCheck.Replace("ㅋ", "").Length == 0)
+                    {
+                        return "학습이 불가능한 금칙어가 포함되어 있습니다.";
+                    }
+                }*/
 
                 reply.RegisterMessage(author, args[0], args[1]);
 
@@ -395,6 +435,7 @@ namespace TelegramBot.Util.Bot
             sb.AppendFormat("/키워드: 학습한 키워드 목록 출력\r\n");
             sb.AppendFormat("/키워드삭제 <키워드1>: 학습한 키워드 삭제\r\n");
             sb.AppendFormat("/나가: 도배 방지 기능. 10분간 작동 정지.\r\n");
+            sb.AppendFormat("/돌아와: 일시 정지 해제.\r\n");
             //sb.AppendFormat("/구문분석 <문장>: 문장 구문 분석\r\n");
             sb.AppendFormat("/version: 현재 버전 출력\r\n");
             sb.AppendFormat("※ 설명서에 적혀 있는 꺽쇠 < > 는 입력하지 않음.");

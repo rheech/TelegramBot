@@ -225,6 +225,18 @@ namespace TelegramBot.Util.Settings
             }
         }
 
+        public string LastBlocker
+        {
+            get
+            {
+                return GetSetting("LastBlocker");
+            }
+            set
+            {
+                SaveSetting("LastBlocker", value);
+            }
+        }
+
         public DateTime LastQueriedDate
         {
             get

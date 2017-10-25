@@ -87,10 +87,12 @@ namespace TelegramBot.Util.Bot
                     //rtn = String.Format("[{0}] {1}", rdr["Author"], rdr["Reply"]);
                     try
                     {
+                        //rtn = String.Format("[{0}] {1}", rdr["Author"], System.Uri.UnescapeDataString(rdr["Reply"].ToString()).Replace("&squot;", "'"));
                         rtn = String.Format("{1}", rdr["Author"], System.Uri.UnescapeDataString(rdr["Reply"].ToString()).Replace("&squot;", "'"));
                     }
                     catch (Exception)
                     {
+                        //rtn = String.Format("[{0}] {1}", rdr["Author"], rdr["Reply"]);
                         rtn = String.Format("{1}", rdr["Author"], rdr["Reply"].ToString());
                     }
                 }
